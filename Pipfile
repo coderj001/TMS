@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+Django = "*"
+djangorestframework = "*"
+djangorestframework-simplejwt = "*"
+gunicorn = "*"
+
+[dev-packages]
+django_linter = "*"
+pylint = "*"
+ipdb = "*"
+ipython = "*"
+isort = "*"
+rope = "*"
+autopep8 = "*"
+
+[requires]
+python_version = "3.9"
