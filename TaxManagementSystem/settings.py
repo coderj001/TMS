@@ -96,7 +96,6 @@ SIMPLE_JWT = {
 
 WSGI_APPLICATION = 'TaxManagementSystem.wsgi.application'
 
-
 if bool(strtobool(os.environ.get('postgres'))):
     DATABASES = {
         'default': {
@@ -131,7 +130,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Kolkata'
@@ -151,7 +149,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "user.User"
-
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
