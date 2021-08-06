@@ -8,6 +8,9 @@ Django = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
 gunicorn = "*"
+drf-yasg = "*"
+whitenoise = "*"
+coreapi = "*"
 
 [dev-packages]
 django_linter = "*"
