@@ -157,7 +157,8 @@ SWAGGER_SETTINGS = {
             'name': 'Authorization',
             'in': 'header'
         }
-    }
+    },
+    'DOC_EXPANSION': 'list'
 }
 
 

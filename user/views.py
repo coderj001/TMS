@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -25,7 +26,11 @@ UserModel = get_user_model()
 
 
 def index(request):
-    return render(request, 'index.html')
+    site_url = get_current_site(request)
+    if not str(site_url) in 'http://':
+        site_url = 'http://'+str(site_url)
+    print(site_url)
+    return render(request, 'index.html', context={'site_url': site_url})
 
 
 class MyTokenObtainPairView(TokenObtainPairView):

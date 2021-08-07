@@ -7,6 +7,21 @@
     </head>
     <link rel="stylesheet" href="{% static 'main.css' %}" type="text/css" media="screen" title="no title" charset="utf-8">
     <body>
-        <h1>Index Page</h1>
+        <div class="container">
+            <h1>Index Page</h1>
+            <p>
+                Base url: <a href="{{ site_url }}">{{site_url}}</a>
+            </p>
+            <br>
+            <p>
+                Swagger Docs:
+                <a href="{{ site_url }}/swagger/">swagger url</a>
+            </p>
+            <br>
+            <p>
+                Redoc:
+                <a href="{{ site_url }}/redoc/">redoc url</a>
+            </p>
+        </div>
     </body>
 </html>
