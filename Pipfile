@@ -11,7 +11,7 @@ gunicorn = "*"
 drf-yasg = "*"
 whitenoise = "*"
 coreapi = "*"
-psycopg2-binary = "*"
+# psycopg2-binary = "*"
 
 [dev-packages]
 django_linter = "*"

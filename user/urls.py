@@ -6,7 +6,8 @@ from user.views import (
     get_user_list,
     get_user_view,
     registerTaxAccountant,
-    registerTaxPayer
+    registerTaxPayer,
+    state_list
 )
 
 app_name = "user"
@@ -19,4 +20,5 @@ urlpatterns = [
     path('list/', get_user_list, name="user_list"),
     path('<uuid:id>/', get_user_view, name="user_view"),
     path('<uuid:id>/edit/', get_user_edit, name="user_edit"),
+    path('state_list/', state_list, name="state_list"),
 ]

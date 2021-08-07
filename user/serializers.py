@@ -14,6 +14,7 @@ class UserSerializer(ModelSerializer):
             'first_name',
             'last_name',
             'user_type',
+            'state',
             'date_joined'
         )
         extra_kwargs = {
@@ -31,6 +32,7 @@ class UserSerializerWithToken(UserSerializer):
             'email',
             'username',
             'user_type',
+            'state',
             'date_joined',
             'token'
         )

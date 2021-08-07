@@ -57,6 +57,53 @@ class User(AbstractBaseUser, PermissionsMixin):
         default='admin'
     )
 
+    state_choice = (
+        ('Andhra Pradesh', 'Andhra Pradesh'),
+        ('Arunachal Pradesh', 'Arunachal Pradesh'),
+        ('Assam', 'Assam'),
+        ('Bihar', 'Bihar'),
+        ('Chhattisgarh', 'Chhattisgarh'),
+        ('Goa', 'Goa'),
+        ('Gujarat', 'Gujarat'),
+        ('Haryana', 'Haryana'),
+        ('Himachal Pradesh', 'Himachal Pradesh'),
+        ('Jharkhand', 'Jharkhand'),
+        ('Karnataka', 'Karnataka'),
+        ('Kerala', 'Kerala'),
+        ('Madhya Pradesh', 'Madhya Pradesh'),
+        ('Maharashtra', 'Maharashtra'),
+        ('Manipur', 'Manipur'),
+        ('Meghalaya', 'Meghalaya'),
+        ('Mizora', 'Mizora'),
+        ('Nagaland', 'Nagaland'),
+        ('Odisha', 'Odisha'),
+        ('Punjab', 'Punjab'),
+        ('Rajasthan', 'Rajasthan'),
+        ('Sikkim', 'Sikkim'),
+        ('Tamil Nadu', 'Tamil Nadu'),
+        ('Telangana', 'Telangana'),
+        ('Tripura', 'Tripura'),
+        ('Uttar Pradesh', 'Uttar Pradesh'),
+        ('Uttarakhand', 'Uttarakhand'),
+        ('West Bengal', 'West Bengal'),
+        ('Andaman and Nicobar Island',
+            'Andaman and Nicobar Island'),
+        ('Chandigarh', 'Chandigarh'),
+        ('Dadra and Nagar Haveli and Daman and Diu',
+         'Dadra and Nagar Haveli and Daman and Diu'),
+        ('Delhi', 'Delhi'),
+        ('Ladakh', 'Ladakh'),
+        ('Lakshadweep', 'Lakshadweep'),
+        ('Jammu and Kashmir', 'Jammu and Kashmir'),
+        ('Puducherry', 'Puducherry')
+    )
+    state = models.CharField(
+        max_length=100,
+        choices=state_choice,
+        default=''
+    )
+    union_territories = models.BooleanField(default=False)
+
     objects = UserManager()
     adminmanager = AdminManager()
     taxpayermanager = TaxPayerManager()
@@ -77,3 +124,19 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return str(self.username)
+
+    def save(self, *args, **kwargs):
+        if self.state in [
+            'Andaman and Nicobar Island',
+            'Chandigarh',
+            'Dadra and Nagar Haveli and Daman and Diu',
+            'Delhi',
+            'Ladakh',
+            'Lakshadweep',
+            'Jammu and Kashmir',
+            'Puducherry'
+        ]:
+            self.union_territories = True
+        else:
+            self.union_territories = False
+        super(User, self).save(*args, **kwargs)

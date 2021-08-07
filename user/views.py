@@ -145,3 +145,48 @@ def get_user_edit(request, id, *args, **kwargs):
             status=HTTP_304_NOT_MODIFIED
         )
     return Response(serializer.data, status=HTTP_200_OK)
+
+
+@swagger_auto_schema(method='get')
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def state_list(request, *args, **kwargs):
+    state = (
+        'Andhra Pradesh',
+        'Arunachal Pradesh',
+        'Assam',
+        'Bihar',
+        'Chhattisgarh',
+        'Goa',
+        'Gujarat',
+        'Haryana',
+        'Himachal Pradesh',
+        'Jharkhand',
+        'Karnataka',
+        'Kerala',
+        'Madhya Pradesh',
+        'Maharashtra',
+        'Manipur',
+        'Meghalaya',
+        'Mizora',
+        'Nagaland',
+        'Odisha',
+        'Punjab',
+        'Rajasthan',
+        'Sikkim',
+        'Tamil Nadu',
+        'Telangana',
+        'Tripura',
+        'Uttar Pradesh',
+        'Uttarakhand',
+        'West Bengal',
+        'Andaman and Nicobar Island',
+        'Chandigarh',
+        'Dadra and Nagar Haveli and Daman and Diu',
+        'Delhi',
+        'Ladakh',
+        'Lakshadweep',
+        'Jammu and Kashmir',
+        'Puducherry'
+    )
+    return Response(state, status=HTTP_200_OK)
