@@ -152,11 +152,14 @@ AUTH_USER_MODEL = "user.User"
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
-        'basic': {
-            'type': 'basic'
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
         }
-    },
+    }
 }
+
 
 REDOC_SETTINGS = {
     'LAZY_RENDERING': False,
