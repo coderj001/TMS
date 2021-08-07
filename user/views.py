@@ -1,7 +1,9 @@
-from django.shortcuts import render
 from django.contrib.auth import get_user_model
+from django.shortcuts import render
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import (
     HTTP_200_OK,
@@ -13,6 +15,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from user.serializers import (
     MyTokenObtainPairSerializer,
+    UserRegisterSerializer,
     UserSerializer,
     UserSerializerWithToken
 )
@@ -29,6 +32,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
+@swagger_auto_schema(method='post', request_body=UserRegisterSerializer)
 @api_view(['POST'])
 def registerTaxAccountant(request):
     """
@@ -49,6 +53,7 @@ def registerTaxAccountant(request):
         return Response(message, status=HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(method='post', request_body=UserRegisterSerializer)
 @api_view(['POST'])
 def registerTaxPayer(request):
     """
@@ -109,6 +114,7 @@ def get_user_view(request, id, *args, **kwargs):
     return Response(serializer.data, status=HTTP_200_OK)
 
 
+@swagger_auto_schema(method='put', request_body=UserSerializer)
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAdminOrTaxAccountant])
 def get_user_edit(request, id, *args, **kwargs):

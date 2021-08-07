@@ -52,3 +52,14 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         for k, v in serializer.items():
             data[k] = v
         return data
+
+
+class UserRegisterSerializer(ModelSerializer):
+
+    class Meta:
+        model = get_user_model()
+        fields = (
+            'email',
+            'username',
+            'password',
+        )

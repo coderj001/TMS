@@ -1,2 +1,2 @@
 ## Tax Management System
-> django, docker, postgres
+> django, docker, postgres, heroku
