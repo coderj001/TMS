@@ -7,11 +7,13 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
+from user.views import index
+
 schema_view = get_schema_view(
     openapi.Info(
         title="Tax Management System API",
         default_version='v1',
-        description="Test description",
+        description="Tax Management System or TMS",
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
@@ -36,6 +38,7 @@ urlpatterns = [
         schema_view.with_ui('redoc', cache_timeout=0),
         name='schema-redoc'
     ),
+    path('', index, name="index"),
 ]
 
 if settings.DEBUG:

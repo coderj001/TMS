@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -18,6 +19,10 @@ from user.serializers import (
 from user.utils import IsAdminOrTaxAccountant
 
 UserModel = get_user_model()
+
+
+def index(request):
+    return render(request, 'index.html')
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
