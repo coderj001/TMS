@@ -36,7 +36,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 @api_view(['POST'])
 def registerTaxAccountant(request):
     """
-    register agent type user
+    register tax-accountant type user
     """
     data = request.data
     try:
@@ -57,7 +57,7 @@ def registerTaxAccountant(request):
 @api_view(['POST'])
 def registerTaxPayer(request):
     """
-    register customer type user
+    register tax-payer type user
     """
     data = request.data
     try:
@@ -78,7 +78,7 @@ def registerTaxPayer(request):
 @permission_classes([IsAuthenticated, IsAdminOrTaxAccountant])
 def get_user_list(request, *args, **kwargs):
     """
-    get list of users according to hierarchy of admin and agent. From point 1.
+    get list of users according to hierarchy of admin and tax-accountant. From point 1.
     """
     if request.user.user_type == 'admin':
         taxpayer = UserModel.taxpayermanager.all()
@@ -119,7 +119,7 @@ def get_user_view(request, id, *args, **kwargs):
 @permission_classes([IsAuthenticated, IsAdminOrTaxAccountant])
 def get_user_edit(request, id, *args, **kwargs):
     """
-    get edit of user according to hierarchy of admin and agent. From point 1.
+    get edit of user according to hierarchy of admin and tax-accountant. From point 1.
     """
     data = request.data
     user = UserModel.objects.get(pk=id)
