@@ -27,7 +27,9 @@ INSTALLED_APPS = [
     'drf_yasg',
 
     # user app
-    'user.apps.UserConfig'
+    'user.apps.UserConfig',
+    # tax app
+    'tax.apps.TaxConfig'
 ]
 
 MIDDLEWARE = [

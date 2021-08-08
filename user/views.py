@@ -136,6 +136,8 @@ def get_user_edit(request, id, *args, **kwargs):
         ):
             return Response({'message': 'Not Allowed'}, status=HTTP_401_UNAUTHORIZED)
 
+    if request.user.user_type != 'admin':
+        data.pop('user_type')
     serializer = UserSerializer(user)
     try:
         serializer.update(instance=user, validated_data=data)
@@ -189,4 +191,5 @@ def state_list(request, *args, **kwargs):
         'Jammu and Kashmir',
         'Puducherry'
     )
+
     return Response(state, status=HTTP_200_OK)
