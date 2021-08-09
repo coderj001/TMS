@@ -70,6 +70,7 @@ class Tax(models.Model):
     class Meta:
         verbose_name = "Tax"
         verbose_name_plural = "Taxs"
+        ordering = ['-created_at', '-updated_at']
 
     def __str__(self):
         return super(Tax, self).__str__()
@@ -100,6 +101,12 @@ class Tax(models.Model):
 
         tax_rate = cgst+sgst
         self.tax_amount = income*tax_rate
+
+    def payment(self):
+        self.payment_date = timezone.now()
+        self.payment = True
+        self.status = 'PAID'
+        self.save()
 
     def save(self, *args, **kwargs):
         self.tax_calculate()

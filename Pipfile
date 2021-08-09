@@ -12,6 +12,9 @@ drf-yasg = "*"
 whitenoise = "*"
 coreapi = "*"
 django-simple-history = "*"
+django-simpleui = "*"
+psycopg2-binary
+
 
 [dev-packages]
 django_linter = "*"
