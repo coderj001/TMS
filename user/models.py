@@ -97,11 +97,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('Jammu and Kashmir', 'Jammu and Kashmir'),
         ('Puducherry', 'Puducherry')
     )
-    indian_state = models.CharField(
+    state = models.CharField(
         max_length=100,
         choices=state_choice,
         default='',
-        verbose_name='Indian State'
+        verbose_name='State',
+        blank=True,
+        null=True
     )
     union_territories = models.BooleanField(default=False)
 
@@ -127,17 +129,18 @@ class User(AbstractBaseUser, PermissionsMixin):
         return str(self.username)
 
     def save(self, *args, **kwargs):
-        if self.state in [
-            'Andaman and Nicobar Island',
-            'Chandigarh',
-            'Dadra and Nagar Haveli and Daman and Diu',
-            'Delhi',
-            'Ladakh',
-            'Lakshadweep',
-            'Jammu and Kashmir',
-            'Puducherry'
-        ]:
-            self.union_territories = True
-        else:
-            self.union_territories = False
+        if self.state:
+            if self.state in [
+                'Andaman and Nicobar Island',
+                'Chandigarh',
+                'Dadra and Nagar Haveli and Daman and Diu',
+                'Delhi',
+                'Ladakh',
+                'Lakshadweep',
+                'Jammu and Kashmir',
+                'Puducherry'
+            ]:
+                self.union_territories = True
+            else:
+                self.union_territories = False
         super(User, self).save(*args, **kwargs)
