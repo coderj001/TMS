@@ -141,3 +141,8 @@ cython_debug/
 .vim/
 .env
 tags
+django-env
+pgdb-env
+initdb/
+pgdata/
+staticfiles/

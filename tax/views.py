@@ -1,22 +1,25 @@
 from datetime import datetime
 
+from django.db.models import Q
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 
 from tax.models import Tax
-from tax.serializers import TaxSerializers, TaxHistorySerializers, TaxReqSerializers
+from tax.serializers import (
+    TaxHistorySerializers,
+    TaxReqSerializers,
+    TaxSerializers
+)
 from user.models import User
 from user.utils import (
     IsAdmin,
     IsAdminOrTaxAccountant,
     IsTaxAccountant
 )
-
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
-from django.db.models import Q
 
 
 # yyyy/mm/dd

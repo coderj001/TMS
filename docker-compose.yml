@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tms_backend
+    command: >
+      sh -c "gunicorn TaxManagementSystem.wsgi --bind 0.0.0.0:8000 --log-file -"
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app:rw
+    env_file:
+      - ./django-env
+    depends_on:
+      - pgdb
+
+  pgdb:
+    image: postgres
+    container_name: pgdb
+    restart: always
+    env_file:
+      - ./pgdb-env
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/
+      - ./initdb:/docker-entrypoint-initdb.d
+
+volumes:
+  pgdata:
