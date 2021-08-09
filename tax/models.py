@@ -103,14 +103,15 @@ class Tax(models.Model):
         self.tax_amount = income*tax_rate
 
     def payment(self):
-        self.payment_date = timezone.now()
-        self.payment = True
-        self.status = 'PAID'
-        self.save()
+        if self.tax_amount >= 0:
+            self.payment_date = timezone.now()
+            self.payment = True
+            self.status = 'PAID'
+            self.save()
 
     def save(self, *args, **kwargs):
         self.tax_calculate()
-        if self.deadline is not None and self.tax_amount >= 0:
+        if self.deadline is not None and self.tax_amount >= 0 and self.payment_date is not None:
             dt = self.deadline - timezone.now()
             if dt.days >= 0:
                 self.fines = 0
