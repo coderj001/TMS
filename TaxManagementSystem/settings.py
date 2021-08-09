@@ -206,5 +206,9 @@ LOGGING = {
     }
 }
 
+SIMPLE_HISTORY_REVERT_DISABLED = True
+
 # Simple UI
 SIMPLEUI_HOME_INFO = False
+
+SIMPLEUI_DEFAULT_THEME = 'admin.lte.css'
