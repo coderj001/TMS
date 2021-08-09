@@ -1,5 +1,9 @@
+from datetime import timedelta
+
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils import timezone
+from simple_history.models import HistoricalRecords
 
 UserModel = get_user_model()
 
@@ -44,6 +48,25 @@ class Tax(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    deadline = models.DateTimeField(blank=True, null=True)
+
+    fines = models.PositiveIntegerField(
+        default=0,
+        blank=True,
+        null=True
+    )
+
+    total_amount = models.PositiveIntegerField(
+        default=0,
+        blank=True,
+        null=True
+    )
+
+    payment_status = models.BooleanField(default=False)
+    payment_date = models.DateTimeField(blank=True, null=True)
+
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = "Tax"
         verbose_name_plural = "Taxs"
@@ -57,9 +80,10 @@ class Tax(models.Model):
         tax_rate = 0
         income = float(self.income)
         if self.tax_payer.state == '':
+            self.tax_amount = 0
             return None
         if self.tax_payer is not None:
-            if self.tax_payer.union_territories:
+            if not self.tax_payer.union_territories:
                 sgst = 0.08
             else:
                 sgst = 0
@@ -79,4 +103,11 @@ class Tax(models.Model):
 
     def save(self, *args, **kwargs):
         self.tax_calculate()
+        if self.deadline is not None and self.tax_amount >= 0:
+            dt = self.deadline - timezone.now()
+            if dt.days >= 0:
+                self.fines = 0
+            else:
+                self.fines = self.tax_amount*0.01
+        self.total_amount = self.tax_amount+self.fines
         super(Tax, self).save(*args, **kwargs)

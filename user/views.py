@@ -46,8 +46,8 @@ def registerTaxAccountant(request):
     data = request.data
     try:
         user = UserModel.objects.create_tax_accountant(
-            username=data.get('username'),
-            email=data.get('email')
+            email=data.get('email'),
+            username=data.get('username')
         )
         user.set_password(data.get('password'))
         user.save()
@@ -67,8 +67,8 @@ def registerTaxPayer(request):
     data = request.data
     try:
         user = UserModel.objects.create_tax_payer(
-            username=data.get('username'),
-            email=data.get('email')
+            email=data.get('email'),
+            username=data.get('username')
         )
         user.set_password(data.get('password'))
         user.save()
