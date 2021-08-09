@@ -80,7 +80,7 @@ class Tax(models.Model):
         sgst = 0
         tax_rate = 0
         income = float(self.income)
-        if self.tax_payer.state == '':
+        if self.tax_payer.indian_state == '':
             self.tax_amount = 0
             return None
         if self.tax_payer is not None:

@@ -97,10 +97,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('Jammu and Kashmir', 'Jammu and Kashmir'),
         ('Puducherry', 'Puducherry')
     )
-    state = models.CharField(
+    indian_state = models.CharField(
         max_length=100,
         choices=state_choice,
-        default=''
+        default='',
+        verbose_name='Indian State'
     )
     union_territories = models.BooleanField(default=False)
 
