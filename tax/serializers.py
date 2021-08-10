@@ -1,12 +1,10 @@
 from rest_framework.serializers import (
-    Serializer,
     DictField,
+    FloatField,
     ListField,
     ModelSerializer,
-    SerializerMethodField,
-    IntegerField,
-    DateTimeField,
-    StringRelatedField,
+    Serializer,
+    SerializerMethodField
 )
 
 from tax.models import Tax
@@ -67,7 +65,5 @@ class TaxHistorySerializers(ModelSerializer):
         fields = ('history', )
 
 
-class TaxReqSerializers(Serializer):
-    income = IntegerField()
-    deadline = DateTimeField()
-    tax_payer = StringRelatedField()
+class TaxPaymentSerializers(Serializer):
+    income = FloatField()

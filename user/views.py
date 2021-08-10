@@ -137,7 +137,8 @@ def get_user_edit(request, id, *args, **kwargs):
             return Response({'message': 'Not Allowed'}, status=HTTP_401_UNAUTHORIZED)
 
     if request.user.user_type != 'admin':
-        data.pop('user_type')
+        if data.get('user_type'):
+            data.pop('user_type')
     serializer = UserSerializer(user)
     try:
         serializer.update(instance=user, validated_data=data)

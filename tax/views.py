@@ -6,12 +6,18 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_201_CREATED, HTTP_401_UNAUTHORIZED
+from rest_framework.status import (
+    HTTP_200_OK,
+    HTTP_201_CREATED,
+    HTTP_400_BAD_REQUEST,
+    HTTP_401_UNAUTHORIZED,
+    HTTP_204_NO_CONTENT
+)
 
 from tax.models import Tax
 from tax.serializers import (
     TaxHistorySerializers,
-    TaxReqSerializers,
+    TaxPaymentSerializers,
     TaxSerializers
 )
 from user.models import User
@@ -181,8 +187,27 @@ def tax_history(request, id, *args, **kwargs):
         return Response(message, status=HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(method='post')
+@swagger_auto_schema(method='post', request_body=TaxPaymentSerializers)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsTaxPayer])
 def tax_payment(request, id, *args, **kwargs):
-    pass
+    user = request.user
+    data = request.data
+    try:
+        tax = Tax.objects.get(pk=id)
+    except Exception as e:
+        message = {'detail': 'Tax with id not found.'}
+        return Response(message, status=HTTP_400_BAD_REQUEST)
+    if tax.tax_payer == user:
+        serializers = TaxPaymentSerializers(data)
+        if (serializers.data.get('income') == tax.total_amount or tax.total_amount == 0) and tax.status != 'PAID':
+            tax.payment()
+            message = {
+                'message': f'Payment of Rs. {tax.total_amount} is success.'}
+            return Response(message, status=HTTP_204_NO_CONTENT)
+        else:
+            message = {'message': f'Amount to be paid Rs.{tax.total_amount}'}
+            return Response(message, status=HTTP_204_NO_CONTENT)
+    else:
+        message = {'detail': 'Tax with id not for current user.'}
+        return Response(message, status=HTTP_400_BAD_REQUEST)

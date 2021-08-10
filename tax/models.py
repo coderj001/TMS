@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
@@ -53,13 +54,13 @@ class Tax(models.Model):
     fines = models.PositiveIntegerField(
         default=0,
         blank=True,
-        null=True
+        null=True,
     )
 
     total_amount = models.PositiveIntegerField(
         default=0,
         blank=True,
-        null=True
+        null=True,
     )
 
     payment_status = models.BooleanField(default=False)
@@ -103,11 +104,10 @@ class Tax(models.Model):
         self.tax_amount = income*tax_rate
 
     def payment(self):
-        if self.tax_amount >= 0:
-            self.payment_date = timezone.now()
-            self.payment = True
-            self.status = 'PAID'
-            self.save()
+        self.payment_date = timezone.now()
+        self.payment = True
+        self.status = 'PAID'
+        self.save()
 
     def save(self, *args, **kwargs):
         self.tax_calculate()
