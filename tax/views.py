@@ -78,6 +78,8 @@ def edit_tax(request, id, *args, **kwargs):
                     Q(username=data.get('tax_payer')) | Q(email=data.get('tax_payer'))).first()
                 if data.get('income'):
                     tax.income = int(data.get('income'))
+                if data.get('status'):
+                    tax.status = data.get('status').upper()
                 if data.get('deadline'):
                     tax.deadline = set_date(data.get('deadline'))
                 if tax_payer:
@@ -86,7 +88,7 @@ def edit_tax(request, id, *args, **kwargs):
                 serializer = TaxSerializers(tax)
                 return Response(serializer.data)
             else:
-                message = {'detail': 'Can\'t edit.'}
+                message = {'detail': 'Tax is already paid.'}
                 return Response(message, status=HTTP_400_BAD_REQUEST)
         else:
             message = {'detail': 'You don\'t have right to edit.'}
@@ -160,6 +162,7 @@ def list_tax(request, *args, **kwargs):
         return Response(serializer.data, status=HTTP_200_OK)
     except Exception as e:
         message = {'detail': 'Error'}
+        print(e)
         return Response(message, status=HTTP_400_BAD_REQUEST)
 
 
@@ -206,7 +209,7 @@ def tax_payment(request, id, *args, **kwargs):
         return Response(message, status=HTTP_400_BAD_REQUEST)
     if tax.tax_payer == user:
         serializers = TaxPaymentSerializers(data)
-        if (serializers.data.get('income') == tax.total_amount or tax.total_amount == 0) and tax.status != 'PAID':
+        if (serializers.data.get('payment') == tax.total_amount or tax.total_amount == 0) and tax.status != 'PAID':
             tax.payment()
             message = {
                 'message': f'Payment of Rs. {tax.total_amount} is success.'}

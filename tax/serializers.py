@@ -44,10 +44,14 @@ class TaxSerializers(ModelSerializer):
         }
 
     def get_tax_accountant(self, obj):
-        return obj.tax_accountant.username
+        if obj.tax_accountant:
+            return obj.tax_accountant.username
+        return ''
 
     def get_tax_payer(self, obj):
-        return obj.tax_payer.username
+        if obj.tax_payer:
+            return obj.tax_payer.username
+        return ''
 
 
 class HistoricalRecordField(ListField):
@@ -66,4 +70,4 @@ class TaxHistorySerializers(ModelSerializer):
 
 
 class TaxPaymentSerializers(Serializer):
-    income = FloatField()
+    payment = FloatField()

@@ -20,8 +20,8 @@ echo -e "${GREEN} LMS Migration ${NC}"
 python manage.py flush --no-input
 echo -e "${GREEN} LMS Migration ${NC}"
 python manage.py migrate
-# echo -e "${GREEN} LMS Testcase ${NC}"
-# python manage.py test -v 3
+echo -e "${GREEN} LMS Testcase ${NC}"
+python manage.py test -v 3
 
 
 exec "$@"

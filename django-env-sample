@@ -1,0 +1,9 @@
+debug=False
+secret_key=django-insecure-101vq(k5xlxjq!c%1fsor0r+%8op4+t_h(62_e5992#)#e%ot
+postgres=True
+DB_HOST=pgdb
+DB_NAME=postgres
+DB_USER=postgres
+DB_PASS=postgres
+DB_PORT=5432
+
