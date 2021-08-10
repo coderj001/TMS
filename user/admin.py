@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.models import Group
 
 from user.forms import UserChangeForm, UserCreationForm
@@ -6,9 +8,10 @@ from user.models import User
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
+    change_password_form = AdminPasswordChangeForm
     list_display = (
         'email',
         'username',
@@ -67,7 +70,12 @@ class UserAdmin(admin.ModelAdmin):
             }
         ),
     )
-    search_fields = ('email', 'username', )
+    search_fields = (
+        'email',
+        'username',
+        'first_name',
+        'last_name'
+    )
     ordering = ('-date_joined', )
 
 

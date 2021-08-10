@@ -8,6 +8,9 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class UserCreationForm(forms.ModelForm):
+    error_messages = {
+        'password_mismatch': _('The two password fields didn’t match.'),
+    }
     password1 = forms.CharField(
         label=_("Password"),
         widget=forms.PasswordInput
@@ -61,6 +64,3 @@ class UserChangeForm(forms.ModelForm):
         f = self.fields.get('user_permissions', None)
         if f is not None:
             f.queryset = f.queryset.select_related('content_type')
-
-    def clean_password(self):
-        return self.initial["password"]

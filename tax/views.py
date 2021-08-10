@@ -167,6 +167,9 @@ def list_tax(request, *args, **kwargs):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAdminOrTaxAccountant])
 def tax_history(request, id, *args, **kwargs):
+    """
+    Get record for tax history or changes, only for admin and tax-accountant. From point 2.
+    """
     user = request.user
     tax = Tax.objects.get(pk=id)
     try:
@@ -191,6 +194,9 @@ def tax_history(request, id, *args, **kwargs):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsTaxPayer])
 def tax_payment(request, id, *args, **kwargs):
+    """
+    Payment for tax, only for tax-payer. From point 2.
+    """
     user = request.user
     data = request.data
     try:
