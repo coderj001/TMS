@@ -6,7 +6,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_201_CREATED, HTTP_401_UNAUTHORIZED
 
 from tax.models import Tax
 from tax.serializers import (
@@ -18,7 +18,8 @@ from user.models import User
 from user.utils import (
     IsAdmin,
     IsAdminOrTaxAccountant,
-    IsTaxAccountant
+    IsTaxAccountant,
+    IsTaxPayer
 )
 
 
@@ -48,7 +49,7 @@ def request_tax(request, *args, **kwargs):
         )
         tax.save()
         serializer = TaxSerializers(tax)
-        return Response(serializer.data)
+        return Response(serializer.data, status=HTTP_201_CREATED)
     except Exception as e:
         message = {'detail': 'Invalid Parameters.'}
         return Response(message, status=HTTP_400_BAD_REQUEST)
@@ -69,9 +70,12 @@ def edit_tax(request, id, *args, **kwargs):
             if tax.status != 'PAID':
                 tax_payer = User.taxpayermanager.filter(
                     Q(username=data.get('tax_payer')) | Q(email=data.get('tax_payer'))).first()
-                tax.income = int(data.get('income'))
-                tax.deadline = set_date(data.get('deadline'))
-                tax.tax_payer = tax_payer
+                if data.get('income'):
+                    tax.income = int(data.get('income'))
+                if data.get('deadline'):
+                    tax.deadline = set_date(data.get('deadline'))
+                if tax_payer:
+                    tax.tax_payer = tax_payer
                 tax.save()
                 serializer = TaxSerializers(tax)
                 return Response(serializer.data)
@@ -98,43 +102,87 @@ updated_at = openapi.Parameter(
     description="updated_at",
     type=openapi.FORMAT_DATETIME
 )
+status = openapi.Parameter(
+    'status',
+    openapi.IN_QUERY,
+    description="Status",
+    type=openapi.FORMAT_SLUG
+)
 
 
-@swagger_auto_schema(method='get', manual_parameters=[created_at, updated_at])
+@swagger_auto_schema(
+    method='get',
+    manual_parameters=[status, created_at, updated_at]
+)
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, AllowAny])
 def list_tax(request, *args, **kwargs):
     """
     Get list of tax according to hierarchy of users. From point 2.
     """
+    try:
+        user = request.user
+        status = request.query_params.get('status')
+        created_at = request.query_params.get('created_at')
+        updated_at = request.query_params.get('updated_at')
+
+        if user.user_type == 'admin':
+            tax = Tax.objects.all().order_by('updated_at')
+        if user.user_type == 'tax-accountant':
+            tax = user.user_tax_accountant.all().order_by('updated_at')
+        if user.user_type == 'tax-payer':
+            tax = user.user_tax_payer.all().order_by('updated_at')
+
+        if status:
+            tax = tax.filter(status=status.upper())
+        if created_at:
+            dt = set_date(created_at)
+            tax = tax.filter(
+                created_at__year=dt.year,
+                created_at__month=dt.month,
+                created_at__day=dt.day
+            )
+        if updated_at:
+            dt = set_date(updated_at)
+            tax = tax.filter(
+                updated_at__year=dt.year,
+                updated_at__month=dt.month,
+                updated_at__day=dt.day
+            )
+
+        serializer = TaxSerializers(tax, many=True)
+        return Response(serializer.data, status=HTTP_200_OK)
+    except Exception as e:
+        message = {'detail': 'Error'}
+        return Response(message, status=HTTP_400_BAD_REQUEST)
+
+
+@swagger_auto_schema(method='get')
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdminOrTaxAccountant])
+def tax_history(request, id, *args, **kwargs):
     user = request.user
-    status = request.query_params.get('status')
-    created_at = request.query_params.get('created_at')
-    updated_at = request.query_params.get('updated_at')
+    tax = Tax.objects.get(pk=id)
+    try:
+        if user.user_type == 'admin' or user.user_type == 'tax-accountant':
+            if user.user_type == 'tax-accountant' and user == tax.tax_accountant:
+                tax_hist = TaxHistorySerializers(tax)
+                return Response(tax_hist.data, status=HTTP_200_OK)
+            elif user.user_type == 'admin':
+                tax_hist = TaxHistorySerializers(tax)
+                return Response(tax_hist.data, status=HTTP_200_OK)
+        else:
+            return Response(
+                'User of tax-payer type not allowed.',
+                status=HTTP_401_UNAUTHORIZED
+            )
+    except Exception as e:
+        message = {'detail': 'Tax with id not found.'}
+        return Response(message, status=HTTP_400_BAD_REQUEST)
 
-    if user.user_type == 'admin':
-        tax = Tax.objects.all().order_by('updated_at')
-    if user.user_type == 'tax-accountant':
-        tax = user.user_tax_accountant.all().order_by('updated_at')
-    if user.user_type == 'tax-payer':
-        tax = user.user_tax_payer.all().order_by('updated_at')
 
-    if status:
-        tax = tax.filter(status=status)
-    if created_at:
-        dt = set_date(created_at)
-        tax = tax.filter(
-            created_at__year=dt.year,
-            created_at__month=dt.month,
-            created_at__day=dt.day
-        )
-    if updated_at:
-        dt = set_date(updated_at)
-        tax = tax.filter(
-            updated_at__year=dt.year,
-            updated_at__month=dt.month,
-            updated_at__day=dt.day
-        )
-
-    serializer = TaxSerializers(tax, many=True)
-    return Response(serializer.data)
+@swagger_auto_schema(method='post')
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsTaxPayer])
+def tax_payment(request, id, *args, **kwargs):
+    pass
