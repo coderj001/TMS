@@ -11,7 +11,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: [3.7, 3.8]
 
     steps:
     - uses: actions/checkout@v2
@@ -32,6 +32,5 @@ jobs:
       env:
         secret-key : django-insecure-101vq(k5xlxjq!c%1fsor0r+%8op4+t_h(62_e5992#)#e%ot
         debug : True
-        postgres : False
       run: |
         python manage.py test
