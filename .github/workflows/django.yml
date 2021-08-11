@@ -31,6 +31,7 @@ jobs:
     - name: Run Tests
       env:
         secret-key : django-insecure-101vq(k5xlxjq!c%1fsor0r+%8op4+t_h(62_e5992#)#e%ot
-        debug : False
+        debug : True
+        postgres : False
       run: |
         python manage.py test
