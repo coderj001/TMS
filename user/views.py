@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render
@@ -28,7 +29,9 @@ UserModel = get_user_model()
 def index(request):
     site_url = get_current_site(request)
     if not str(site_url) in 'http://':
-        site_url = 'http://'+str(site_url)
+        if settings.DEBUG:
+            site_url = 'http://'+str(site_url)
+        site_url = 'https://'+str(site_url)
     print(site_url)
     return render(request, 'index.html', context={'site_url': site_url})
 
