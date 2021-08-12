@@ -31,7 +31,9 @@ def index(request):
     if not str(site_url) in 'http://':
         if settings.DEBUG:
             site_url = 'http://'+str(site_url)
-        site_url = 'https://'+str(site_url)
+        else:
+            site_url = 'https://'+str(site_url)
+
     print(site_url)
     return render(request, 'index.html', context={'site_url': site_url})
 
@@ -108,15 +110,24 @@ def get_user_view(request, id, *args, **kwargs):
     user = UserModel.objects.get(pk=id)
     if user != request.user:
         if request.user.user_type == 'admin' and user.user_type == 'admin':
-            return Response({'message': 'Not Allowed'}, status=HTTP_401_UNAUTHORIZED)
+            return Response(
+                {'message': 'Not Allowed'},
+                status=HTTP_401_UNAUTHORIZED
+            )
         if request.user.user_type == 'tax-accountant' and (
             user.user_type == 'admin' or user.user_type == 'tax-accountant'
         ):
-            return Response({'message': 'Not Allowed'}, status=HTTP_401_UNAUTHORIZED)
+            return Response(
+                {'message': 'Not Allowed'},
+                status=HTTP_401_UNAUTHORIZED
+            )
         if request.user.user_type == 'tax-payer' and (
             user.user_type == 'tax-payer' or user.user_type == 'admin' or user.user_type == 'tax-accountant'
         ):
-            return Response({'message': 'Not Allowed'}, status=HTTP_401_UNAUTHORIZED)
+            return Response(
+                {'message': 'Not Allowed'},
+                status=HTTP_401_UNAUTHORIZED
+            )
 
     serializer = UserSerializer(user)
     return Response(serializer.data, status=HTTP_200_OK)
@@ -137,7 +148,10 @@ def get_user_edit(request, id, *args, **kwargs):
         if request.user.user_type == 'tax-accountant' and (
             user.user_type == 'admin' or user.user_type == 'tax-accountant'
         ):
-            return Response({'message': 'Not Allowed'}, status=HTTP_401_UNAUTHORIZED)
+            return Response(
+                {'message': 'Not Allowed'},
+                status=HTTP_401_UNAUTHORIZED
+            )
 
     if request.user.user_type != 'admin':
         if data.get('user_type'):

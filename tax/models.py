@@ -49,7 +49,7 @@ class Tax(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    deadline = models.DateTimeField(blank=True, null=True)
+    deadline = models.DateField(blank=True, null=True)
 
     fines = models.PositiveIntegerField(
         default=0,
@@ -105,14 +105,14 @@ class Tax(models.Model):
 
     def payment(self):
         self.payment_date = timezone.now()
-        self.payment = True
+        self.payment_status = True
         self.status = 'PAID'
         self.save()
 
     def save(self, *args, **kwargs):
         self.tax_calculate()
-        if self.deadline is not None and self.tax_amount >= 0 and self.payment_date is not None:
-            dt = self.deadline - timezone.now()
+        if self.deadline is not None and self.tax_amount >= 0 and self.payment_date is None:
+            dt = self.deadline - timezone.now().date()
             if dt.days >= 0:
                 self.fines = 0
             else:

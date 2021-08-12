@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 from django.db.models import Q
 from drf_yasg import openapi
@@ -9,9 +9,9 @@ from rest_framework.response import Response
 from rest_framework.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
+    HTTP_204_NO_CONTENT,
     HTTP_400_BAD_REQUEST,
-    HTTP_401_UNAUTHORIZED,
-    HTTP_204_NO_CONTENT
+    HTTP_401_UNAUTHORIZED
 )
 
 from tax.models import Tax
@@ -31,8 +31,8 @@ from user.utils import (
 
 # yyyy/mm/dd
 def set_date(sdate):
-    var = list(map(int, sdate.split('/')))
-    return datetime(var[0], var[1], var[2])
+    var = list(map(int, sdate.split('-')))
+    return date(var[0], var[1], var[2])
 
 
 @swagger_auto_schema(method='post', request_body=TaxSerializers)
@@ -45,14 +45,21 @@ def request_tax(request, *args, **kwargs):
     tax_accountant = request.user
     data = request.data
     try:
-        tax_payer = User.taxpayermanager.filter(
-            Q(username=data.get('tax_payer')) | Q(email=data.get('tax_payer'))).first()
-        tax = Tax.objects.create(
-            income=int(data.get('income')),
-            deadline=set_date(data.get('deadline')),
-            tax_accountant=tax_accountant,
-            tax_payer=tax_payer
-        )
+        if data.get('tax_payer'):
+            tax_payer = User.taxpayermanager.filter(
+                Q(username=data.get('tax_payer')) | Q(email=data.get('tax_payer'))).first()
+            if tax_payer.state == '':
+                message = {
+                    'detail': f'{tax_payer.username} state is not selected'
+                }
+                return Response(message, status=HTTP_400_BAD_REQUEST)
+        tax = Tax()
+        tax.income = int(data.get('income'))
+        tax.tax_payer = tax_payer
+        tax.tax_accountant = tax_accountant
+        if data.get('deadline'):
+            deadline = set_date(data.get('deadline'))
+            tax.deadline = deadline
         tax.save()
         serializer = TaxSerializers(tax)
         return Response(serializer.data, status=HTTP_201_CREATED)

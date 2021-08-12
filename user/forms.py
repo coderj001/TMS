@@ -51,16 +51,16 @@ class UserChangeForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = (
-            'username',
             'email',
+            'username',
             'password',
             'user_type',
             'is_active',
             'is_admin'
         )
 
-    def __init__(self, *args, **kwargs):
-        super(UserChangeForm, self).__init__(*args, **kwargs)
-        f = self.fields.get('user_permissions', None)
-        if f is not None:
-            f.queryset = f.queryset.select_related('content_type')
+    def save(self, *args, **kwargs):
+        email = self.cleaned_data.get('email')
+        instance = super(UserChangeForm, self).save(*args, **kwargs)
+        instance.email = email
+        return instance
