@@ -48,7 +48,7 @@ def request_tax(request, *args, **kwargs):
         if data.get('tax_payer'):
             tax_payer = User.taxpayermanager.filter(
                 Q(username=data.get('tax_payer')) | Q(email=data.get('tax_payer'))).first()
-            if tax_payer.state == '':
+            if tax_payer.state is None:
                 message = {
                     'detail': f'{tax_payer.username} state is not selected'
                 }
